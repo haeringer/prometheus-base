@@ -1,0 +1,8 @@
+route:
+    receiver: webhook
+
+receivers:
+    - name: 'webhook'
+      webhook_configs:
+          - send_resolved: true
+            url: 'https://myreceivingsystem.domain/webhook/1234567890'
