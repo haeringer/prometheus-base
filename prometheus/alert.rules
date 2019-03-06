@@ -2,16 +2,25 @@ groups:
 - name: Example Rule Group
   rules:
 
-  - alert: high_load
+  - alert: InstanceDown
+    expr: up == 0
+    for: 2m
+    labels:
+      severity: page
+    annotations:
+      summary: "Instance {{ $labels.instance }} down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."
+
+  - alert: HighLoad
     expr: node_load1 > 0.5
-    for: 1m
+    for: 5m
     labels:
       severity: warning
     annotations:
       summary: "Instance {{ $labels.instance }} under high load"
       description: "{{ $labels.instance }} of job {{ $labels.job }} under high load"
 
-  - alert: out_of_memory
+  - alert: OutOfMemory
     expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
     for: 5m
     labels:
@@ -20,7 +29,7 @@ groups:
       summary: "Out of memory (instance {{ $labels.instance }})"
       description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
 
-  - alert: out_of_disk_space
+  - alert: OutOfDiskSpace
     expr: node_filesystem_free_bytes{mountpoint ="/rootfs"} / node_filesystem_size_bytes{mountpoint ="/rootfs"} * 100 < 10
     for: 5m
     labels:
